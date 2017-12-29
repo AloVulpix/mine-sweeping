@@ -130,79 +130,81 @@ function addEvent(node, area) {
         if (ifFinish) return
         const dom = document.querySelector(`#${area.id}`)
         const type = ev.buttons
-        if (type == 1) {
-            // 左键
-            if (area.status == 1) {
-                judgeIfDie(area.type)
-                area.status = 3
-                showArea(area)
-            }
-        } else if (type == 2) {
-            //右键
-            if (area.status == 3) return
-            // 取消插旗
-            if (area.status == 2) {
-                area.status = 1
-                modifyNode(2, area)
-                modifyScore(2)
-            } else {
-                // 插旗子
-                area.status = 2
-                modifyNode(1, area)
-                modifyScore(1)
-            }
-        } else if (type == 3) {
-            // 同时按下
-            const row = area.id[1]
-            const col = area.id[3]
-            const rArray = []
-            const cArray = []
-            findNeighbor(row, col, rArray, cArray)
-
-            let QiCount = 0
-            
-            rArray.map((rVal) => {
-                cArray.map((cVal) => {
-                    if (document.querySelector(`#r${rVal}c${cVal}`).innerHTML == '旗') {
-                        QiCount++
+        switch(type){
+            case 1: // 左键
+                    if (area.status == 1) {
+                        judgeIfDie(area.type)
+                        area.status = 3
+                        showArea(area)
+                    }   
+                    break;
+            case 2: //右键
+                    if (area.status == 3) return
+                    // 取消插旗
+                    if (area.status == 2) {
+                        area.status = 1
+                        modifyNode(2, area)
+                        modifyScore(2)
+                    } else {
+                        // 插旗子
+                        area.status = 2
+                        modifyNode(1, area)
+                        modifyScore(1)
                     }
-                })
-            })
+                    break;
+            case 3: // 同时按下
+                    const row = area.id[1]
+                    const col = area.id[3]
+                    const rArray = []
+                    const cArray = []
+                    findNeighbor(row, col, rArray, cArray)
 
-            if (QiCount == Number(node.innerHTML)) {
-                const index = AREA_ARRAY.indexOf(area)
-                showNeighbor(index - ROW)
-                showNeighbor(index + ROW)
-                if (index % COLUMN == 0 ) {
-                    showNeighbor(index - ROW + 1)
-                    showNeighbor(index + 1)
-                    showNeighbor(index + ROW + 1)
-                } else if ((index + 1) % COLUMN == 0) {
-                    showNeighbor(index - 1)
-                    showNeighbor(index - ROW - 1)
-                    showNeighbor(index + ROW - 1)
-                } else {
-                    showNeighbor(index - ROW + 1)
-                    showNeighbor(index + 1)
-                    showNeighbor(index + ROW + 1)
-                    showNeighbor(index - 1)
-                    showNeighbor(index - ROW - 1)
-                    showNeighbor(index + ROW - 1)
-                }
-            }
+                    let QiCount = 0
 
-            function showNeighbor(indexTmp) {
-                const areaTmp = AREA_ARRAY[indexTmp]
-                if (validate(indexTmp) && areaTmp.status == 1) {
-                    areaTmp.status = 3
-                    modifyNode(3, areaTmp)
-                    if (areaTmp.type == -1) {
-                        ifFinish = true
+                    rArray.map((rVal) => {
+                        cArray.map((cVal) => {
+                            if (document.querySelector(`#r${rVal}c${cVal}`).innerHTML == '旗') {
+                                QiCount++
+                            }
+                        })
+                    })
+
+                    if (QiCount == Number(node.innerHTML)) {
+                        const index = AREA_ARRAY.indexOf(area)
+                        showNeighbor(index - ROW)
+                        showNeighbor(index + ROW)
+                        if (index % COLUMN == 0 ) {
+                            showNeighbor(index - ROW + 1)
+                            showNeighbor(index + 1)
+                            showNeighbor(index + ROW + 1)
+                        } else if ((index + 1) % COLUMN == 0) {
+                            showNeighbor(index - 1)
+                            showNeighbor(index - ROW - 1)
+                            showNeighbor(index + ROW - 1)
+                        } else {
+                            showNeighbor(index - ROW + 1)
+                            showNeighbor(index + 1)
+                            showNeighbor(index + ROW + 1)
+                            showNeighbor(index - 1)
+                            showNeighbor(index - ROW - 1)
+                            showNeighbor(index + ROW - 1)
+                        }
                     }
-                }
-            }
+
+                    function showNeighbor(indexTmp) {
+                        const areaTmp = AREA_ARRAY[indexTmp]
+                        if (validate(indexTmp) && areaTmp.status == 1) {
+                            areaTmp.status = 3
+                            modifyNode(3, areaTmp)
+                            if (areaTmp.type == -1) {
+                                ifFinish = true
+                            }
+                        }
+                    }
+                    break;
+            default: break;
         }
-
+        
         // 判断赢了没有
         if (ifWin()) {
             ifFinish = true
